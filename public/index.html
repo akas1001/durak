@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Клубничный Дурак</title>
+<title>Дурак с Кисонькой</title>
 <style>
 :root{--pink:#ff6fae;--pink2:#ffc2dc;--plum:#5b2346;--cream:#fff7fb}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -28,7 +28,10 @@ box-shadow:0 3px 6px rgba(91,35,70,.2);display:flex;align-items:center;justify-c
 .card .c2{top:auto;left:auto;bottom:3px;right:5px;transform:rotate(180deg)}
 .red{color:#e8366f}.blk{color:var(--plum)}
 .card.trumpcard{border-color:#ffb300}
-.back{background:radial-gradient(circle,#fff 2.5px,transparent 3px) 0 0/12px 12px,var(--pink);border:3px solid #fff;color:#fff;font-size:24px}
+.back{background:radial-gradient(circle,#fff 2.5px,transparent 3px) 0 0/12px 12px,var(--pink);border:3px solid #fff}
+.back svg{width:70%;filter:drop-shadow(0 1px 0 #fff)}
+h1 svg{width:40px;height:40px;vertical-align:middle}
+.lobby .kit{width:130px;height:130px}
 .hand{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
 .hand .card{cursor:pointer;transition:transform .12s}
 .hand .card.ok:hover{transform:translateY(-6px)}
@@ -50,10 +53,11 @@ box-shadow:0 3px 6px rgba(91,35,70,.2);display:flex;align-items:center;justify-c
 @media(max-width:480px){.card{width:52px;height:76px;font-size:24px}.card .c{font-size:12px}.pair{width:66px;height:94px}.opp .card{margin-left:-32px}}
 .wrap{position:relative;z-index:1}
 #sakura{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden}
-.petal{position:absolute;top:-30px;width:14px;height:11px;background:linear-gradient(135deg,#fff0f6,#ffb3d1);
-border-radius:150% 0 150% 0;opacity:.85;animation:fall linear infinite,sway ease-in-out infinite alternate}
-@keyframes fall{to{top:105vh;transform:rotate(540deg)}}
-@keyframes sway{from{margin-left:-30px}to{margin-left:30px}}
+.petal{position:absolute;top:-40px;left:0;animation:fall linear infinite}
+.petal i{display:block;width:18px;height:14px;background:linear-gradient(135deg,#fff,#ff9fc6 70%);border-radius:150% 0 150% 0;
+box-shadow:0 1px 3px rgba(168,50,106,.35);animation:spin ease-in-out infinite alternate}
+@keyframes fall{0%{transform:translate(0,0)}25%{transform:translate(40px,27vh)}50%{transform:translate(-20px,54vh)}75%{transform:translate(35px,80vh)}100%{transform:translate(-10px,112vh)}}
+@keyframes spin{0%{transform:rotate(0) rotateX(0) scale(var(--s))}100%{transform:rotate(320deg) rotateX(70deg) scale(var(--s))}}
 .card svg.face{width:46px;height:60px}
 @media(max-width:480px){.card svg.face{width:38px;height:50px}}
 </style>
@@ -139,11 +143,11 @@ function join(c){isHost=false;me=1;code=c;lobbyMsg('Подключаюсь к д
 function lost(){view=null;G=null;lobbyMsg('Соперник отключился 💔 <br><br><button onclick="location.href=location.pathname">Новая игра</button>')}
 
 /* ---------- экраны ---------- */
-function lobbyMsg(t){app.innerHTML=`<h1>🍓 Клубничный Дурак 🍓</h1><div class="panel lobby"><div class="big">🃏</div><div>${t}</div></div>`}
-function lobby(){app.innerHTML=`<h1>🍓 Клубничный Дурак 🍓</h1><div class="panel lobby"><div class="big">💗🃏💗</div>
+function lobbyMsg(t){app.innerHTML=`<h1>${kittySVG()} Дурак с Кисонькой 🌸</h1><div class="panel lobby">${kittySVG("kit")}<div>${t}</div></div>`}
+function lobby(){app.innerHTML=`<h1>${kittySVG()} Дурак с Кисонькой 🌸</h1><div class="panel lobby">${kittySVG("kit")}
 <div>Подкидной дурак на двоих. Создай игру и отправь ссылку другу.</div><button id="go">Создать игру</button></div>`;
 document.getElementById('go').onclick=host}
-function lobbyWait(){const link=location.href;app.innerHTML=`<h1>🍓 Клубничный Дурак 🍓</h1><div class="panel lobby">
+function lobbyWait(){const link=location.href;app.innerHTML=`<h1>${kittySVG()} Дурак с Кисонькой 🌸</h1><div class="panel lobby">
 <div>Отправь другу эту ссылку:</div><input id="lnk" readonly value="${link}"><div class="row" style="justify-content:center">
 <button id="cp">Скопировать</button>${navigator.share?'<button id="sh">Поделиться</button>':''}</div>
 <div class="msg">Ждём друга… не закрывай эту вкладку ✨</div></div>`;
@@ -181,10 +185,33 @@ function faceSVG(r,s){
   }
   return `<svg class="face" viewBox="0 0 50 64">${x}</svg>`;
 }
-function petals(){const box=document.getElementById('sakura');let h='';for(let i=0;i<22;i++){
-  const d=7+Math.random()*8;h+=`<div class="petal" style="left:${Math.random()*100}%;animation-duration:${d}s,${2+Math.random()*2}s;animation-delay:${-Math.random()*d}s,0s;transform:scale(${.6+Math.random()*.7})"></div>`}
+
+function kittySVG(cls=''){return `<svg class="${cls}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 48 L24 8 L48 30Z" fill="#ffb36b" stroke="#5b2346" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M82 48 L76 8 L52 30Z" fill="#ffb36b" stroke="#5b2346" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M26 36 L28 18 L40 30Z" fill="#ffb3c7"/><path d="M74 36 L72 18 L60 30Z" fill="#ffb3c7"/>
+<ellipse cx="50" cy="57" rx="40" ry="33" fill="#ffb36b" stroke="#5b2346" stroke-width="2.5"/>
+<path d="M44 26 Q45 33 43 38 M50 25 L50 37 M56 26 Q55 33 57 38" stroke="#e57f34" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+<path d="M12 56 Q19 55 22 59 M88 56 Q81 55 78 59" stroke="#e57f34" stroke-width="3" stroke-linecap="round" fill="none"/>
+<ellipse cx="50" cy="73" rx="17" ry="12" fill="#fff1e3"/>
+<ellipse cx="34" cy="55" rx="8" ry="9.5" fill="#3a1c33"/><ellipse cx="66" cy="55" rx="8" ry="9.5" fill="#3a1c33"/>
+<circle cx="37" cy="51" r="3.2" fill="#fff"/><circle cx="69" cy="51" r="3.2" fill="#fff"/>
+<circle cx="31.5" cy="59" r="1.6" fill="#fff"/><circle cx="63.5" cy="59" r="1.6" fill="#fff"/>
+<ellipse cx="22" cy="67" rx="6" ry="3.5" fill="#ff8fb3" opacity=".7"/><ellipse cx="78" cy="67" rx="6" ry="3.5" fill="#ff8fb3" opacity=".7"/>
+<path d="M46.5 65 L53.5 65 L50 69Z" fill="#ff6f9c" stroke="#5b2346" stroke-width="1.2" stroke-linejoin="round"/>
+<path d="M43 71 Q46.5 76 50 71 Q53.5 76 57 71" stroke="#5b2346" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M6 64 L28 68 M6 74 L28 72 M94 64 L72 68 M94 74 L72 72" stroke="#5b2346" stroke-width="1.5" stroke-linecap="round"/>
+</svg>`}
+function bgPattern(){
+  const k=kittySVG().replace('<svg class=""','<svg x="10" y="12" width="64" height="64"');
+  const pat=`<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220"><g opacity=".55">${k}</g>
+   <text x="130" y="60" font-size="26">🍓</text><text x="150" y="170" font-size="22">💗</text><text x="40" y="180" font-size="24">🌸</text><text x="110" y="120" font-size="16">✨</text></svg>`;
+  document.body.style.backgroundImage=`url("data:image/svg+xml,${encodeURIComponent(pat)}"),linear-gradient(160deg,#f3a7c8,#c95f8f)`;
+}
+function petals(){const box=document.getElementById('sakura');let h='';for(let i=0;i<34;i++){
+  const d=8+Math.random()*9;h+=`<div class="petal" style="left:${Math.random()*100}%;animation-duration:${d}s;animation-delay:${-Math.random()*d}s"><i style="--s:${.6+Math.random()*.8};animation-duration:${1.5+Math.random()*2.5}s"></i></div>`}
   box.innerHTML=h}
-petals();
+petals();bgPattern();
 function cardHTML(c,cls=''){const red=c.s==='♥'||c.s==='♦';const t=view&&c.s===view.trump.s?' trumpcard':'';
 return`<div class="card ${red?'red':'blk'}${t} ${cls}"><span class="c">${RANKS[c.r]}<br>${c.s}</span>${c.r>=5?faceSVG(c.r,c.s):c.s}<span class="c c2">${RANKS[c.r]}<br>${c.s}</span></div>`}
 function sortHand(h,tr){return[...h].sort((a,b)=>((a.s===tr)-(b.s===tr))||SUITS.indexOf(a.s)-SUITS.indexOf(b.s)||a.r-b.r)}
@@ -198,11 +225,11 @@ function render(){
   else if(myAtt)status=v.table.length&&!open?'Всё отбито: подкинь ещё или жми «Бито»':open?'Соперник отбивается…':'Твой ход: атакуй 💪';
   else status=open?'Отбивайся! 🛡️':'Соперник думает, подкидывать ли…';
   const hand=sortHand(v.hand,v.trump.s);
-  app.innerHTML=`<h1>🍓 Клубничный Дурак 🍓</h1>
-  <div class="panel"><div class="opp">${Array.from({length:v.opp},()=>'<div class="card back">♥</div>').join('')||'<div class="msg">у соперника нет карт</div>'}</div>
+  app.innerHTML=`<h1>${kittySVG()} Дурак с Кисонькой 🌸</h1>
+  <div class="panel"><div class="opp">${Array.from({length:v.opp},()=>'<div class="card back">'+kittySVG()+'</div>').join('')||'<div class="msg">у соперника нет карт</div>'}</div>
    <div class="cnt">Соперник: ${v.opp} карт ${v.att!==v.me?'· атакует':'· защищается'}</div></div>
   <div class="panel"><div class="row" style="justify-content:space-between;align-items:flex-start">
-    <div class="deck">${v.deck?cardHTML(v.trump,'trump')+(v.deck>1?'<div class="card back">♥</div>':''):''}</div>
+    <div class="deck">${v.deck?cardHTML(v.trump,'trump')+(v.deck>1?'<div class="card back">'+kittySVG()+'</div>':''):''}</div>
     <div style="text-align:right"><div class="cnt">Козырь: <b style="font-size:20px">${v.trump.s}</b></div><div class="cnt">В колоде: ${v.deck}</div></div></div>
     <div class="table" id="tbl">${v.table.map((x,i)=>`<div class="pair ${!x.d?'open':''} ${selTarget===i?'sel':''}" data-i="${i}">${cardHTML(x.a)}${x.d?cardHTML(x.d,'d'):''}</div>`).join('')||'<div class="msg">Стол пуст</div>'}</div></div>
   <div class="status">${status}</div><div class="msg">${v.msg||''}</div>
