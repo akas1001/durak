@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Клубничный Дурак</title>
-<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <style>
 :root{--pink:#ff6fae;--pink2:#ffc2dc;--plum:#5b2346;--cream:#fff7fb}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -55,7 +54,7 @@ box-shadow:0 3px 6px rgba(91,35,70,.2);display:flex;align-items:center;justify-c
 <script>
 const SUITS=['♠','♣','♥','♦'],RANKS=['6','7','8','9','10','В','Д','К','Т'];
 const app=document.getElementById('app');
-let peer,conn,me=0,isHost=false,G=null,view=null,selTarget=null,code='';
+let ws,me=0,isHost=false,G=null,view=null,selTarget=null,code='';
 
 /* ---------- игра (считает хост) ---------- */
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
@@ -108,27 +107,26 @@ function act(p,a){
   sync();
 }
 function viewFor(p){const g=G;return{me:p,hand:g.hands[p],opp:g.hands[1-p].length,table:g.table,trump:g.trump,deck:g.deck.length,att:g.att,winner:g.winner,msg:g.msg}}
-function sync(){view=viewFor(0);render();if(conn&&conn.open)conn.send({t:'state',v:viewFor(1)})}
-function send(a){if(isHost)act(0,a);else if(conn&&conn.open)conn.send({t:'act',a})}
+function sync(){view=viewFor(0);render();if(ws&&ws.readyState===1)ws.send(JSON.stringify({t:'state',v:viewFor(1)}))}
+function send(a){if(isHost)act(0,a);else if(ws&&ws.readyState===1)ws.send(JSON.stringify({t:'act',a}))}
 
 /* ---------- сеть ---------- */
 function rid(){return Math.random().toString(36).slice(2,8)}
-function host(){
-  isHost=true;me=0;code=rid();
-  peer=new Peer('klubnika-durak-'+code);
-  peer.on('open',()=>{history.replaceState(null,'','#'+code);lobbyWait()});
-  peer.on('connection',c=>{conn=c;c.on('open',()=>{G=newGame();sync()});
-    c.on('data',d=>{if(d.t==='act')act(1,d.a)});c.on('close',()=>lost())});
-  peer.on('error',e=>lobbyMsg('Ошибка связи: '+e.type+'. Обнови страницу.'));
+function connect(role,onOpen){
+  ws=new WebSocket((location.protocol==='https:'?'wss':'ws')+'://'+location.host+'/ws?room='+code+'&role='+role);
+  ws.onopen=onOpen;
+  ws.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch{return}
+    if(d.t==='join'&&isHost){G=G||newGame();sync()}
+    else if(d.t==='hello'&&isHost&&G)sync();
+    else if(d.t==='act'&&isHost)act(1,d.a);
+    else if(d.t==='state'&&!isHost){view=d.v;render()}
+    else if(d.t==='left')lost();};
+  ws.onerror=()=>lobbyMsg('Нет связи с сервером 😿 Обнови страницу.');
+  clearInterval(window.pinger);window.pinger=setInterval(()=>{if(ws.readyState===1)ws.send('{"t":"ping"}')},25000);
 }
-function join(c){
-  isHost=false;me=1;code=c;lobbyMsg('Подключаюсь к другу…');
-  peer=new Peer();
-  peer.on('open',()=>{conn=peer.connect('klubnika-durak-'+code,{reliable:true});
-    conn.on('data',d=>{if(d.t==='state'){view=d.v;render()}});conn.on('close',()=>lost())});
-  peer.on('error',e=>lobbyMsg(e.type==='peer-unavailable'?'Игра не найдена: попроси друга создать новую ссылку.':'Ошибка связи: '+e.type));
-}
-function lost(){view=null;lobbyMsg('Соперник отключился 💔 <br><br><button onclick="location.href=location.pathname">Новая игра</button>')}
+function host(){isHost=true;me=0;code=rid();history.replaceState(null,'','#'+code);connect('host',lobbyWait)}
+function join(c){isHost=false;me=1;code=c;lobbyMsg('Подключаюсь к другу…');connect('guest',()=>ws.send('{"t":"hello"}'))}
+function lost(){view=null;G=null;lobbyMsg('Соперник отключился 💔 <br><br><button onclick="location.href=location.pathname">Новая игра</button>')}
 
 /* ---------- экраны ---------- */
 function lobbyMsg(t){app.innerHTML=`<h1>🍓 Клубничный Дурак 🍓</h1><div class="panel lobby"><div class="big">🃏</div><div>${t}</div></div>`}
@@ -178,7 +176,7 @@ function render(){
 }
 
 const h=location.hash.slice(1);
-if(typeof Peer==='undefined')lobbyMsg('Не загрузилась библиотека связи, обнови страницу.');else if(h)join(h);else lobby();
+if(/^[a-z0-9]{4,12}$/.test(h))join(h);else lobby();
 </script>
 </body>
 </html>
