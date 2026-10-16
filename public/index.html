@@ -2,190 +2,51 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Дурак с Кисонькой</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Кошачий Фрукторез</title>
 <style>
-:root{--pink:#ff6fae;--pink2:#ffc2dc;--plum:#5b2346;--cream:#fff7fb}
+:root{--pink:#ff6fae;--plum:#5b2346}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;min-height:100vh;font-family:"Trebuchet MS",system-ui,sans-serif;color:var(--plum);
-background-color:#e58cb2;
-background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Ctext x='10' y='40' font-size='28'%3E%F0%9F%8D%93%3C/text%3E%3Ctext x='90' y='60' font-size='22'%3E%F0%9F%92%97%3C/text%3E%3Ctext x='40' y='120' font-size='22'%3E%F0%9F%8C%B8%3C/text%3E%3Ctext x='110' y='145' font-size='18'%3E%E2%9C%A8%3C/text%3E%3C/svg%3E"),linear-gradient(160deg,#f3a7c8,#c95f8f);
-background-attachment:fixed}
-.wrap{max-width:820px;margin:0 auto;padding:12px 12px 24px;display:flex;flex-direction:column;gap:12px;min-height:100vh}
-h1{margin:4px 0;text-align:center;font-size:26px;color:#fff;text-shadow:2px 2px 0 #a8326a}
-.panel{background:rgba(255,255,255,.82);border:3px solid #fff;border-radius:22px;padding:12px;box-shadow:0 6px 18px rgba(214,51,132,.18)}
-.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.status{text-align:center;font-weight:bold;font-size:17px;color:#fff;text-shadow:1px 1px 0 #a8326a}
-.msg{text-align:center;font-size:14px;opacity:.85;min-height:18px}
-.wrap>.msg{color:#fff}
-button{font:inherit;font-weight:bold;border:0;border-radius:999px;padding:10px 20px;background:var(--pink);color:#fff;box-shadow:0 4px 0 #d63384;cursor:pointer}
-button:active{transform:translateY(2px);box-shadow:0 2px 0 #d63384}
-button:disabled{opacity:.4;cursor:default}
-input{font:inherit;width:100%;padding:10px;border-radius:12px;border:2px solid var(--pink2)}
-.card{width:64px;height:92px;border-radius:10px;background:var(--cream);border:2px solid var(--pink2);position:relative;flex:none;
-box-shadow:0 3px 6px rgba(91,35,70,.2);display:flex;align-items:center;justify-content:center;font-size:30px;user-select:none}
-.card .c{position:absolute;top:3px;left:5px;font-size:14px;line-height:1;text-align:center;font-weight:bold}
-.card .c2{top:auto;left:auto;bottom:3px;right:5px;transform:rotate(180deg)}
-.red{color:#e8366f}.blk{color:var(--plum)}
-.card.trumpcard{border-color:#ffb300}
-.back{background:radial-gradient(circle,#fff 2.5px,transparent 3px) 0 0/12px 12px,var(--pink);border:3px solid #fff}
-.back svg{width:70%;filter:drop-shadow(0 1px 0 #fff)}
-h1 svg{width:40px;height:40px;vertical-align:middle}
-.lobby .kit{width:130px;height:130px}
-.hand{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
-.hand .card{cursor:pointer;transition:transform .12s}
-.hand .card.ok:hover{transform:translateY(-6px)}
-.hand .card.no{opacity:.55}
-.opp{display:flex;justify-content:center}
-.opp .card{margin-left:-38px}.opp .card:first-child{margin-left:0}
-.table{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;min-height:120px;align-items:center}
-.pair{position:relative;width:80px;height:110px}
-.pair .card{position:absolute;left:0;top:0}
-.pair .card.d{left:14px;top:16px;transform:rotate(8deg)}
-.pair.sel .card:first-child{border-color:#d63384;box-shadow:0 0 0 3px #ff6fae}
-.pair.open{cursor:pointer}
-.deck{position:relative;width:110px;height:100px}
-.deck .trump{position:absolute;left:30px;top:4px;transform:rotate(90deg)}
-.deck .back{position:absolute;left:0;top:4px}
-.cnt{font-size:13px;text-align:center}
-.lobby{text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;margin:auto 0}
-.big{font-size:60px}
-@media(max-width:480px){.card{width:52px;height:76px;font-size:24px}.card .c{font-size:12px}.pair{width:66px;height:94px}.opp .card{margin-left:-32px}}
-.wrap{position:relative;z-index:1}
-#sakura{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none}
+body{font-family:"Trebuchet MS",system-ui,sans-serif;color:var(--plum);background:linear-gradient(160deg,#f3a7c8,#c95f8f) fixed;background-color:#e58cb2}
+canvas{position:fixed;inset:0;width:100%;height:100%;touch-action:none;z-index:3}
+#sakura{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
 .petal{position:absolute;top:-40px;left:0;animation:fall linear infinite}
 .petal i{display:block;width:18px;height:14px;background:linear-gradient(135deg,#fff,#ff9fc6 70%);border-radius:150% 0 150% 0;
 box-shadow:0 1px 3px rgba(168,50,106,.35);animation:spin ease-in-out infinite alternate}
 @keyframes fall{0%{transform:translate(0,0)}25%{transform:translate(40px,27vh)}50%{transform:translate(-20px,54vh)}75%{transform:translate(35px,80vh)}100%{transform:translate(-10px,112vh)}}
 @keyframes spin{0%{transform:rotate(0) rotateX(0) scale(var(--s))}100%{transform:rotate(320deg) rotateX(70deg) scale(var(--s))}}
-.card svg.face{width:46px;height:60px}
-@media(max-width:480px){.card svg.face{width:38px;height:50px}}
+#hud{position:fixed;top:0;left:0;right:0;z-index:4;display:none;justify-content:space-between;align-items:flex-start;padding:10px 14px;pointer-events:none;
+color:#fff;font-weight:bold;text-shadow:2px 2px 0 #a8326a}
+#hud .big{font-size:34px;line-height:1}#hud .lbl{font-size:13px;opacity:.9}
+#hud .mid{text-align:center}#hud .r{text-align:right}
+#ui{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:16px}
+#ui.hide{display:none}
+.panel{background:rgba(255,255,255,.88);border:3px solid #fff;border-radius:24px;padding:20px;max-width:380px;width:100%;text-align:center;
+box-shadow:0 8px 24px rgba(168,50,106,.3);display:flex;flex-direction:column;gap:12px;align-items:center}
+h1{margin:0;font-size:28px;color:#d63384}
+.kit{width:120px;height:120px}
+button{font:inherit;font-weight:bold;border:0;border-radius:999px;padding:12px 22px;background:var(--pink);color:#fff;box-shadow:0 4px 0 #d63384;cursor:pointer;width:100%}
+button.alt{background:#fff;color:#d63384;box-shadow:0 4px 0 #f3a7c8;border:2px solid #ffc2dc}
+button:active{transform:translateY(2px);box-shadow:0 2px 0 #d63384}
+input{font:inherit;width:100%;padding:10px;border-radius:12px;border:2px solid #ffc2dc;text-align:center}
+.small{font-size:14px;opacity:.85}
+.res{font-size:46px;font-weight:bold;color:#d63384}
+.vs{display:flex;justify-content:space-around;width:100%;font-weight:bold}
+.vs div{font-size:30px}
+#count{position:fixed;inset:0;z-index:6;display:none;align-items:center;justify-content:center;font-size:120px;font-weight:bold;color:#fff;text-shadow:4px 4px 0 #a8326a;pointer-events:none}
 </style>
 </head>
 <body>
 <div id="sakura"></div>
-<div class="wrap" id="app"></div>
+<canvas id="cv"></canvas>
+<div id="hud"><div><div class="lbl">Ты</div><div class="big" id="myS">0</div></div>
+<div class="mid"><div class="lbl">Время</div><div class="big" id="tm">60</div></div>
+<div class="r" id="oppBox"><div class="lbl">Друг</div><div class="big" id="opS">0</div></div></div>
+<div id="count"></div>
+<div id="ui"></div>
 <script>
-const SUITS=['♠','♣','♥','♦'],RANKS=['6','7','8','9','10','В','Д','К','Т'];
-const app=document.getElementById('app');
-let ws,me=0,isHost=false,G=null,view=null,selTarget=null,code='';
-
-/* ---------- игра (считает хост) ---------- */
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
-function newGame(){
-  const deck=[];for(const s of SUITS)for(let r=0;r<9;r++)deck.push({s,r});
-  shuffle(deck);
-  const g={deck,trump:deck[0],hands:[[],[]],table:[],att:0,winner:null,msg:'Новая игра!'};
-  for(let k=0;k<6;k++)for(const p of[0,1])g.hands[p].push(g.deck.pop());
-  let best=[99,99];
-  for(const p of[0,1])for(const c of g.hands[p])if(c.s===g.trump.s)best[p]=Math.min(best[p],c.r);
-  g.att=best[1]<best[0]?1:0;
-  return g;
-}
-const same=(a,b)=>a.s===b.s&&a.r===b.r;
-function beats(g,d,a){return(d.s===a.s&&d.r>a.r)||(d.s===g.trump.s&&a.s!==g.trump.s)}
-function canAttack(g,c){
-  const def=1-g.att,open=g.table.filter(x=>!x.d).length;
-  if(g.table.length>=6||open>=g.hands[def].length)return false;
-  if(!g.table.length)return true;
-  return g.table.some(x=>x.a.r===c.r||(x.d&&x.d.r===c.r));
-}
-function refill(g,p){while(g.hands[p].length<6&&g.deck.length)g.hands[p].push(g.deck.pop())}
-function checkEnd(g){
-  if(g.deck.length)return;
-  const e0=!g.hands[0].length,e1=!g.hands[1].length;
-  if(e0&&e1)g.winner='draw';else if(e0)g.winner=0;else if(e1)g.winner=1;
-}
-function act(p,a){
-  const g=G;if(g.winner!==null){if(a.type==='again'){G=newGame();sync()}return}
-  const def=1-g.att,hand=g.hands[p];
-  if(a.type==='play'){
-    const i=hand.findIndex(c=>same(c,a.card));if(i<0)return;const c=hand[i];
-    if(p===g.att){
-      if(!canAttack(g,c))return;
-      hand.splice(i,1);g.table.push({a:c,d:null});g.msg=(p===0?'Хозяин':'Гость')+' подкинул '+RANKS[c.r]+c.s;
-    }else{
-      let t=a.target!=null&&g.table[a.target]&&!g.table[a.target].d&&beats(g,c,g.table[a.target].a)?a.target:
-        g.table.findIndex(x=>!x.d&&beats(g,c,x.a));
-      if(t<0)return;
-      hand.splice(i,1);g.table[t].d=c;g.msg='Отбито '+RANKS[c.r]+c.s;
-    }
-  }else if(a.type==='bito'){
-    if(p!==g.att||!g.table.length||g.table.some(x=>!x.d))return;
-    g.table=[];refill(g,g.att);refill(g,def);g.att=def;g.msg='Бито! Ход переходит';checkEnd(g);
-  }else if(a.type==='take'){
-    if(p!==def||!g.table.some(x=>!x.d))return;
-    for(const x of g.table){hand.push(x.a);if(x.d)hand.push(x.d)}
-    g.table=[];refill(g,g.att);g.msg=(p===0?'Хозяин':'Гость')+' забрал карты';checkEnd(g);
-  }
-  sync();
-}
-function viewFor(p){const g=G;return{me:p,hand:g.hands[p],opp:g.hands[1-p].length,table:g.table,trump:g.trump,deck:g.deck.length,att:g.att,winner:g.winner,msg:g.msg}}
-function sync(){view=viewFor(0);render();if(ws&&ws.readyState===1)ws.send(JSON.stringify({t:'state',v:viewFor(1)}))}
-function send(a){if(isHost)act(0,a);else if(ws&&ws.readyState===1)ws.send(JSON.stringify({t:'act',a}))}
-
-/* ---------- сеть ---------- */
-function rid(){return Math.random().toString(36).slice(2,8)}
-function connect(role,onOpen){
-  ws=new WebSocket((location.protocol==='https:'?'wss':'ws')+'://'+location.host+'/ws?room='+code+'&role='+role);
-  ws.onopen=onOpen;
-  ws.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch{return}
-    if(d.t==='join'&&isHost){G=G||newGame();sync()}
-    else if(d.t==='hello'&&isHost&&G)sync();
-    else if(d.t==='act'&&isHost)act(1,d.a);
-    else if(d.t==='state'&&!isHost){view=d.v;render()}
-    else if(d.t==='left')lost();};
-  ws.onerror=()=>lobbyMsg('Нет связи с сервером 😿 Обнови страницу.');
-  clearInterval(window.pinger);window.pinger=setInterval(()=>{if(ws.readyState===1)ws.send('{"t":"ping"}')},25000);
-}
-function host(){isHost=true;me=0;code=rid();history.replaceState(null,'','#'+code);connect('host',lobbyWait)}
-function join(c){isHost=false;me=1;code=c;lobbyMsg('Подключаюсь к другу…');connect('guest',()=>ws.send('{"t":"hello"}'))}
-function lost(){view=null;G=null;lobbyMsg('Соперник отключился 💔 <br><br><button onclick="location.href=location.pathname">Новая игра</button>')}
-
-/* ---------- экраны ---------- */
-function lobbyMsg(t){app.innerHTML=`<h1>${kittySVG()} Дурак с Кисонькой 🌸</h1><div class="panel lobby">${kittySVG("kit")}<div>${t}</div></div>`}
-function lobby(){app.innerHTML=`<h1>${kittySVG()} Дурак с Кисонькой 🌸</h1><div class="panel lobby">${kittySVG("kit")}
-<div>Подкидной дурак на двоих. Создай игру и отправь ссылку другу.</div><button id="go">Создать игру</button></div>`;
-document.getElementById('go').onclick=host}
-function lobbyWait(){const link=location.href;app.innerHTML=`<h1>${kittySVG()} Дурак с Кисонькой 🌸</h1><div class="panel lobby">
-<div>Отправь другу эту ссылку:</div><input id="lnk" readonly value="${link}"><div class="row" style="justify-content:center">
-<button id="cp">Скопировать</button>${navigator.share?'<button id="sh">Поделиться</button>':''}</div>
-<div class="msg">Ждём друга… не закрывай эту вкладку ✨</div></div>`;
-document.getElementById('cp').onclick=()=>{const i=document.getElementById('lnk');i.select();navigator.clipboard?.writeText(link);document.getElementById('cp').textContent='Скопировано 💗'};
-const sh=document.getElementById('sh');if(sh)sh.onclick=()=>navigator.share({title:'Сыграем в дурака?',url:link})}
-
-
-function faceSVG(r,s){
-  const red=s==='♥'||s==='♦',robe=red?'#ff6fae':'#7a3fa0',robe2=red?'#ffd1e4':'#d8c2f0',ink='#5b2346',gold='#ffc93c';
-  const eyes=`<circle cx="20" cy="27" r="1.8" fill="${ink}"/><circle cx="30" cy="27" r="1.8" fill="${ink}"/>
-   <ellipse cx="16.5" cy="31" rx="2.6" ry="1.5" fill="#ff9cc2"/><ellipse cx="33.5" cy="31" rx="2.6" ry="1.5" fill="#ff9cc2"/>`;
-  const head=`<circle cx="25" cy="28" r="10" fill="#ffe4d4" stroke="${ink}" stroke-width="1"/>`;
-  const body=`<path d="M10 64 Q11 42 25 40 Q39 42 40 64Z" fill="${robe}" stroke="${ink}" stroke-width="1"/>
-   <path d="M25 40 L25 64" stroke="${robe2}" stroke-width="3"/><text x="25" y="57" font-size="9" text-anchor="middle" fill="#fff">${s}</text>`;
-  let x='';
-  if(r===8){ // туз: цветок сакуры
-    let pet='';for(let i=0;i<5;i++)pet+=`<ellipse cx="25" cy="18" rx="8" ry="12" fill="${red?'#ffb3d1':'#e2c8f5'}" stroke="${ink}" stroke-width="1" transform="rotate(${i*72} 25 32)"/>`;
-    x=pet+`<circle cx="25" cy="32" r="8" fill="#fff" stroke="${ink}" stroke-width="1"/><text x="25" y="36.5" font-size="12" text-anchor="middle" fill="${red?'#e8366f':ink}">${s}</text>`;
-  }else if(r===7){ // король
-    x=body+`<path d="M15 40 Q25 52 35 40 Q35 34 25 35 Q15 34 15 40Z" fill="#fff" stroke="${ink}" stroke-width="1"/>`+head+eyes+
-     `<path d="M22 33 Q25 35 28 33" stroke="${ink}" fill="none" stroke-width="1"/>
-      <path d="M14 20 L16 8 L20.5 15 L25 5 L29.5 15 L34 8 L36 20Z" fill="${gold}" stroke="${ink}" stroke-width="1"/>
-      <circle cx="25" cy="14" r="1.8" fill="${robe}"/>`;
-  }else if(r===6){ // дама
-    x=`<path d="M13 30 Q12 46 17 50 L33 50 Q38 46 37 30 Q37 16 25 16 Q13 16 13 30Z" fill="${red?'#c46a3a':'#3b2a4a'}" stroke="${ink}" stroke-width="1"/>`+body+head+eyes+
-     `<path d="M15 25 Q20 16 25 18 Q30 16 35 25 Q30 20 25 21 Q20 20 15 25Z" fill="${red?'#c46a3a':'#3b2a4a'}"/>
-      <path d="M22.5 33 Q25 35 27.5 33" stroke="#e8366f" fill="none" stroke-width="1.2"/>
-      <path d="M18 18 L19.5 10 L22 15 L25 8 L28 15 L30.5 10 L32 18Z" fill="${gold}" stroke="${ink}" stroke-width="1"/>
-      <circle cx="25" cy="13" r="1.5" fill="#fff"/>`;
-  }else{ // валет
-    x=body+head+eyes+`<path d="M23 33 Q25 34.5 27 33" stroke="${ink}" fill="none" stroke-width="1"/>
-      <path d="M15 24 Q16 15 25 15 Q34 15 35 24 Q30 20 25 21 Q20 20 15 24Z" fill="${red?'#8a4a2a':'#2b2238'}"/>
-      <ellipse cx="25" cy="15" rx="13" ry="4.5" fill="${robe}" stroke="${ink}" stroke-width="1"/>
-      <path d="M34 13 Q44 4 41 16" fill="${gold}" stroke="${ink}" stroke-width="1"/>`;
-  }
-  return `<svg class="face" viewBox="0 0 50 64">${x}</svg>`;
-}
-
+/* ---------- оформление ---------- */
 function kittySVG(cls=''){return `<svg class="${cls}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
 <path d="M18 48 L24 8 L48 30Z" fill="#ffb36b" stroke="#5b2346" stroke-width="2.5" stroke-linejoin="round"/>
 <path d="M82 48 L76 8 L52 30Z" fill="#ffb36b" stroke="#5b2346" stroke-width="2.5" stroke-linejoin="round"/>
@@ -202,53 +63,172 @@ function kittySVG(cls=''){return `<svg class="${cls}" viewBox="0 0 100 100" xmln
 <path d="M43 71 Q46.5 76 50 71 Q53.5 76 57 71" stroke="#5b2346" stroke-width="2" fill="none" stroke-linecap="round"/>
 <path d="M6 64 L28 68 M6 74 L28 72 M94 64 L72 68 M94 74 L72 72" stroke="#5b2346" stroke-width="1.5" stroke-linecap="round"/>
 </svg>`}
-function bgPattern(){
+(function decor(){
   const k=kittySVG().replace('<svg class=""','<svg x="10" y="12" width="64" height="64"');
-  const pat=`<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220"><g opacity=".55">${k}</g>
+  const pat=`<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220"><g opacity=".5">${k}</g>
    <text x="130" y="60" font-size="26">🍓</text><text x="150" y="170" font-size="22">💗</text><text x="40" y="180" font-size="24">🌸</text><text x="110" y="120" font-size="16">✨</text></svg>`;
   document.body.style.backgroundImage=`url("data:image/svg+xml,${encodeURIComponent(pat)}"),linear-gradient(160deg,#f3a7c8,#c95f8f)`;
-}
-function petals(){const box=document.getElementById('sakura');let h='';for(let i=0;i<34;i++){
-  const d=8+Math.random()*9;h+=`<div class="petal" style="left:${Math.random()*100}%;animation-duration:${d}s;animation-delay:${-Math.random()*d}s"><i style="--s:${.6+Math.random()*.8};animation-duration:${1.5+Math.random()*2.5}s"></i></div>`}
-  box.innerHTML=h}
-petals();bgPattern();
-function cardHTML(c,cls=''){const red=c.s==='♥'||c.s==='♦';const t=view&&c.s===view.trump.s?' trumpcard':'';
-return`<div class="card ${red?'red':'blk'}${t} ${cls}"><span class="c">${RANKS[c.r]}<br>${c.s}</span>${c.r>=5?faceSVG(c.r,c.s):c.s}<span class="c c2">${RANKS[c.r]}<br>${c.s}</span></div>`}
-function sortHand(h,tr){return[...h].sort((a,b)=>((a.s===tr)-(b.s===tr))||SUITS.indexOf(a.s)-SUITS.indexOf(b.s)||a.r-b.r)}
+  let h='';for(let i=0;i<30;i++){const d=8+Math.random()*9;
+    h+=`<div class="petal" style="left:${Math.random()*100}%;animation-duration:${d}s;animation-delay:${-Math.random()*d}s"><i style="--s:${.6+Math.random()*.8};animation-duration:${1.5+Math.random()*2.5}s"></i></div>`}
+  document.getElementById('sakura').innerHTML=h;
+})();
 
-function render(){
-  const v=view;if(!v)return;
-  const myAtt=v.att===v.me,open=v.table.filter(x=>!x.d).length;
-  const g={trump:v.trump,table:v.table,att:v.att,hands:[]};g.hands[1-v.att]={length:myAtt?v.opp:v.hand.length};
-  let status;
-  if(v.winner!==null)status=v.winner==='draw'?'Ничья! 🤝':v.winner===v.me?'Ты выиграл! 🎉🍓':'Ты дурак 😜 Реванш?';
-  else if(myAtt)status=v.table.length&&!open?'Всё отбито: подкинь ещё или жми «Бито»':open?'Соперник отбивается…':'Твой ход: атакуй 💪';
-  else status=open?'Отбивайся! 🛡️':'Соперник думает, подкидывать ли…';
-  const hand=sortHand(v.hand,v.trump.s);
-  app.innerHTML=`<h1>${kittySVG()} Дурак с Кисонькой 🌸</h1>
-  <div class="panel"><div class="opp">${Array.from({length:v.opp},()=>'<div class="card back">'+kittySVG()+'</div>').join('')||'<div class="msg">у соперника нет карт</div>'}</div>
-   <div class="cnt">Соперник: ${v.opp} карт ${v.att!==v.me?'· атакует':'· защищается'}</div></div>
-  <div class="panel"><div class="row" style="justify-content:space-between;align-items:flex-start">
-    <div class="deck">${v.deck?cardHTML(v.trump,'trump')+(v.deck>1?'<div class="card back">'+kittySVG()+'</div>':''):''}</div>
-    <div style="text-align:right"><div class="cnt">Козырь: <b style="font-size:20px">${v.trump.s}</b></div><div class="cnt">В колоде: ${v.deck}</div></div></div>
-    <div class="table" id="tbl">${v.table.map((x,i)=>`<div class="pair ${!x.d?'open':''} ${selTarget===i?'sel':''}" data-i="${i}">${cardHTML(x.a)}${x.d?cardHTML(x.d,'d'):''}</div>`).join('')||'<div class="msg">Стол пуст</div>'}</div></div>
-  <div class="status">${status}</div><div class="msg">${v.msg||''}</div>
-  <div class="row" style="justify-content:center">
-   ${v.winner!==null?'<button id="again">Ещё раз 💗</button>':myAtt?`<button id="bito" ${v.table.length&&!open?'':'disabled'}>Бито</button>`:`<button id="take" ${open?'':'disabled'}>Беру</button>`}</div>
-  <div class="panel"><div class="hand">${hand.map((c,i)=>{
-    let ok=v.winner===null&&(myAtt?canAttack(g,c):open&&v.table.some(x=>!x.d&&beats(g,c,x.a)));
-    return cardHTML(c,(ok?'ok':'no')).replace('class="card','data-h="'+i+'" class="card')}).join('')}</div>
-   <div class="cnt">Твои карты: ${v.hand.length}</div></div>`;
-  app.querySelectorAll('[data-h]').forEach(el=>el.onclick=()=>{const c=hand[+el.dataset.h];send({type:'play',card:c,target:selTarget});selTarget=null});
-  app.querySelectorAll('.pair.open').forEach(el=>el.onclick=()=>{if(myAtt)return;const i=+el.dataset.i;selTarget=selTarget===i?null:i;render()});
-  const b=id=>document.getElementById(id);
-  if(b('bito'))b('bito').onclick=()=>send({type:'bito'});
-  if(b('take'))b('take').onclick=()=>send({type:'take'});
-  if(b('again'))b('again').onclick=()=>send({type:'again'});
+/* ---------- игра ---------- */
+const DUR=60,G=1.6;
+const FRUITS=[['🍉','#ff4d6d'],['🍊','#ff9f1c'],['🍎','#e63946'],['🍋','#ffd60a'],['🍑','#ffb4a2'],['🍓','#ff006e'],['🍍','#ffc300'],['🥝','#80b918'],['🍇','#9d4edd'],['🍒','#d00000']];
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+let W,H,DPR,RAD;
+function resize(){DPR=Math.min(2,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);RAD=Math.max(30,Math.min(62,Math.min(W,H)*.075))}
+addEventListener('resize',resize);resize();
+const sprites={};
+function sprite(e){if(sprites[e])return sprites[e];const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');
+  x.font='100px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",system-ui';x.textAlign='center';x.textBaseline='middle';x.fillText(e,64,70);return sprites[e]=c}
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function schedule(seed){const R=rng(seed),list=[];let t=1;
+  while(t<DUR-1.2){
+    const n=t<12?1+(R()<.35):t<35?1+(R()*3|0):2+(R()*4|0);
+    for(let i=0;i<n;i++){const x=.12+.76*R();
+      list.push({t:t+i*.18*R(),x,vx:(.5-x)*.45+(R()-.5)*.15,vy:-(1.3+.28*R()),rot:(R()-.5)*6,
+        bomb:R()<(t<8?0:t<30?.12:.18),f:R()*FRUITS.length|0});}
+    t+=t<12?1.3+.5*R():t<40?.9+.5*R():.7+.4*R();
+  }
+  return list.sort((a,b)=>a.t-b.t)}
+
+let mode='menu',items=[],next=0,live=[],halves=[],parts=[],pops=[],trail=[],start=0,score=0,stroke=0,strokeT=0,shake=0,flash=0,sched=[],lastSent=-1;
+function begin(seed){
+  sched=schedule(seed);next=0;live=[];halves=[];parts=[];pops=[];score=0;oppScore=0;oppFinal=null;
+  document.getElementById('myS').textContent=0;document.getElementById('opS').textContent=0;
+  document.getElementById('oppBox').style.visibility=duel?'visible':'hidden';
+  hideUI();document.getElementById('hud').style.display='flex';
+  mode='count';const c=document.getElementById('count');c.style.display='flex';let n=3;c.textContent=n;
+  const iv=setInterval(()=>{n--;if(n>0)c.textContent=n;else{clearInterval(iv);c.textContent='Режь!';setTimeout(()=>c.style.display='none',600);
+    mode='play';start=performance.now()}},800);
 }
+function posOf(o,el){const dt=el-o.t;return{x:(o.x+o.vx*dt)*W,y:(1.08+o.vy*dt+.5*G*dt*dt)*H,a:o.rot*dt,vx:o.vx*W,vy:(o.vy+G*dt)*H}}
+function addScore(d){score=Math.max(0,score+d);document.getElementById('myS').textContent=score;
+  if(duel&&score!==lastSent){lastSent=score;net({t:'score',s:score})}}
+function slice(o,el){
+  const p=posOf(o,el);o.dead=true;
+  if(o.bomb){shake=.35;flash=.3;addScore(-5);pops.push({x:p.x,y:p.y,txt:'-5 💥',t:0,c:'#ff3b3b'});
+    for(let i=0;i<18;i++)parts.push({x:p.x,y:p.y,vx:(Math.random()-.5)*600,vy:(Math.random()-.5)*600,t:0,c:i%2?'#333':'#ff9f1c'});return}
+  stroke++;strokeT=performance.now();addScore(1);
+  const [e,col]=FRUITS[o.f];
+  for(const s of[-1,1])halves.push({e,x:p.x,y:p.y,vx:p.vx+s*110,vy:p.vy-120,a:p.a,va:s*4,side:s,t:0});
+  for(let i=0;i<10;i++)parts.push({x:p.x,y:p.y,vx:(Math.random()-.5)*420,vy:(Math.random()-.8)*420,t:0,c:col});
+}
+function endStroke(){if(stroke>=3){const b=stroke;addScore(b);const last=trail[trail.length-1]||{x:W/2,y:H/2};
+  pops.push({x:last.x,y:last.y,txt:`Комбо ×${b}! +${b}`,t:0,c:'#fff'})}stroke=0}
+function segHit(ax,ay,bx,by,cx,cy,r){const dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy||1;let t=((cx-ax)*dx+(cy-ay)*dy)/l;t=Math.max(0,Math.min(1,t));
+  const x=ax+t*dx-cx,y=ay+t*dy-cy;return x*x+y*y<r*r}
+
+let down=false;
+cv.addEventListener('pointerdown',e=>{down=true;trail=[{x:e.clientX,y:e.clientY,t:performance.now()}]});
+cv.addEventListener('pointermove',e=>{if(!down||mode!=='play')return;const now=performance.now(),pt={x:e.clientX,y:e.clientY,t:now},last=trail[trail.length-1];trail.push(pt);
+  if(!last)return;const el=(now-start)/1000;
+  for(const o of live)if(!o.dead){const p=posOf(o,el);if(segHit(last.x,last.y,pt.x,pt.y,p.x,p.y,RAD*.9))slice(o,el)}});
+addEventListener('pointerup',()=>{down=false;endStroke()});
+addEventListener('pointercancel',()=>{down=false;endStroke()});
+
+let prev=performance.now();
+function loop(now){
+  const dt=Math.min(.05,(now-prev)/1000);prev=now;
+  ctx.clearRect(0,0,W,H);
+  if(mode==='play'||mode==='count'){ctx.fillStyle='rgba(80,15,50,.32)';ctx.fillRect(0,0,W,H)}
+  ctx.save();
+  if(shake>0){shake-=dt;ctx.translate((Math.random()-.5)*14,(Math.random()-.5)*14)}
+  if(mode==='play'){
+    const el=(now-start)/1000,left=Math.max(0,DUR-el);
+    document.getElementById('tm').textContent=Math.ceil(left);
+    while(next<sched.length&&sched[next].t<=el)live.push(sched[next++]);
+    if(stroke&&now-strokeT>300&&!down)endStroke();
+    for(const o of live){if(o.dead)continue;const p=posOf(o,el);
+      if(el-o.t>.5&&p.y>H+RAD*2){o.dead=true;continue}
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);
+      if(o.bomb){ctx.shadowColor='#ff3b3b';ctx.shadowBlur=18}
+      ctx.drawImage(sprite(o.bomb?'💣':FRUITS[o.f][0]),-RAD,-RAD,RAD*2,RAD*2);ctx.restore()}
+    live=live.filter(o=>!o.dead);
+    if(left<=0)finish();
+  }
+  // половинки
+  for(const h of halves){h.t+=dt;h.vy+=G*H*dt;h.x+=h.vx*dt;h.y+=h.vy*dt;h.a+=h.va*dt;
+    ctx.save();ctx.translate(h.x,h.y);ctx.rotate(h.a);ctx.beginPath();ctx.rect(h.side<0?-RAD:0,-RAD,RAD,RAD*2);ctx.clip();
+    ctx.globalAlpha=Math.max(0,1-h.t/1.6);ctx.drawImage(sprite(h.e),-RAD,-RAD,RAD*2,RAD*2);ctx.restore()}
+  halves=halves.filter(h=>h.y<H+RAD*2&&h.t<1.6);
+  for(const p of parts){p.t+=dt;p.vy+=900*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;ctx.globalAlpha=Math.max(0,1-p.t/.7);ctx.fillStyle=p.c;
+    ctx.beginPath();ctx.arc(p.x,p.y,4,0,7);ctx.fill()}
+  ctx.globalAlpha=1;parts=parts.filter(p=>p.t<.7);
+  for(const p of pops){p.t+=dt;ctx.globalAlpha=Math.max(0,1-p.t);ctx.font='bold 26px "Trebuchet MS",system-ui';ctx.textAlign='center';
+    ctx.lineWidth=5;ctx.strokeStyle='#a8326a';ctx.strokeText(p.txt,p.x,p.y-p.t*50);ctx.fillStyle=p.c;ctx.fillText(p.txt,p.x,p.y-p.t*50)}
+  ctx.globalAlpha=1;pops=pops.filter(p=>p.t<1);
+  // след от пальца
+  trail=trail.filter(p=>now-p.t<140);
+  if(trail.length>1){ctx.lineCap='round';ctx.lineJoin='round';
+    for(const [w,c] of[[12,'rgba(255,111,174,.45)'],[5,'#fff']]){ctx.lineWidth=w;ctx.strokeStyle=c;ctx.beginPath();ctx.moveTo(trail[0].x,trail[0].y);
+      for(const p of trail)ctx.lineTo(p.x,p.y);ctx.stroke()}}
+  ctx.restore();
+  if(flash>0){flash-=dt;ctx.fillStyle=`rgba(255,40,40,${flash})`;ctx.fillRect(0,0,W,H)}
+  requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
+
+/* ---------- экраны ---------- */
+const ui=document.getElementById('ui');
+function showUI(html){ui.innerHTML=`<div class="panel">${html}</div>`;ui.classList.remove('hide')}
+function hideUI(){ui.classList.add('hide')}
+function getBest(){try{return+localStorage.getItem('fr_best')||0}catch{return 0}}
+function setBest(v){try{localStorage.setItem('fr_best',v)}catch{}}
+let duel=false,isHost=false,code='',ws=null,oppScore=0,oppFinal=null,wins=[0,0],guestHere=false;
+
+function menu(){mode='menu';document.getElementById('hud').style.display='none';
+  showUI(`${kittySVG('kit')}<h1>Кошачий Фрукторез</h1><div class="small">Режь фрукты пальцем или мышкой. Бомбы не трогай! 3+ фрукта одним взмахом: комбо.</div>
+  <button id="duel">⚔️ Дуэль с другом</button><button class="alt" id="solo">🍉 Играть одному</button><div class="small">Рекорд: ${getBest()}</div>`);
+  document.getElementById('solo').onclick=()=>{duel=false;begin(Math.random()*1e9|0)};
+  document.getElementById('duel').onclick=hostDuel}
+function finish(){
+  mode='over';document.getElementById('hud').style.display='none';
+  const rec=score>getBest();if(rec)setBest(score);
+  if(!duel){showUI(`${kittySVG('kit')}<div class="small">Твой счёт</div><div class="res">${score}</div><div class="small">${rec?'Новый рекорд! 🎉':'Рекорд: '+getBest()}</div>
+    <button id="again">Ещё раз</button><button class="alt" id="back">В меню</button>`);
+    document.getElementById('again').onclick=()=>begin(Math.random()*1e9|0);document.getElementById('back').onclick=menu;return}
+  net({t:'final',s:score});duelResult()}
+function duelResult(){
+  if(mode!=='over')return;
+  if(oppFinal===null){showUI(`${kittySVG('kit')}<div class="small">Твой счёт</div><div class="res">${score}</div><div class="small">Ждём результат друга…</div>`);return}
+  if(!duelResult.counted){duelResult.counted=true;if(score>oppFinal)wins[0]++;else if(oppFinal>score)wins[1]++}
+  const t=score>oppFinal?'Ты победил! 🏆':score<oppFinal?'Друг победил 😿':'Ничья! 🤝';
+  showUI(`${kittySVG('kit')}<h1>${t}</h1><div class="vs"><span>Ты<div>${score}</div></span><span>Друг<div>${oppFinal}</div></span></div>
+   <div class="small">Счёт серии: <b>${wins[0]} : ${wins[1]}</b></div><button id="re">Реванш ⚔️</button><button class="alt" id="back">Выйти</button>`);
+  document.getElementById('re').onclick=()=>{if(isHost)startDuel();else{net({t:'rematch'});document.getElementById('re').textContent='Ждём хозяина…'}};
+  document.getElementById('back').onclick=()=>location.href=location.pathname}
+function startDuel(){const seed=Math.random()*1e9|0;duelResult.counted=false;net({t:'start',seed});begin(seed)}
+
+/* ---------- сеть (свой сервер на Cloudflare) ---------- */
+function net(o){if(ws&&ws.readyState===1)ws.send(JSON.stringify(o))}
+function connect(role,onOpen){
+  ws=new WebSocket((location.protocol==='https:'?'wss':'ws')+'://'+location.host+'/ws?room='+code+'&role='+role);
+  ws.onopen=onOpen;
+  ws.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch{return}
+    if((d.t==='join'||d.t==='hello')&&isHost){guestHere=true;if(mode==='menu'||mode==='wait')hostReady()}
+    else if(d.t==='start'&&!isHost){duelResult.counted=false;begin(d.seed)}
+    else if(d.t==='score'){oppScore=d.s;document.getElementById('opS').textContent=d.s}
+    else if(d.t==='final'){oppFinal=d.s;document.getElementById('opS').textContent=d.s;duelResult()}
+    else if(d.t==='rematch'&&isHost&&mode==='over')startDuel()
+    else if(d.t==='left'){guestHere=false;showUI(`${kittySVG('kit')}<h1>Друг вышел 💔</h1><button onclick="location.href=location.pathname">В меню</button>`);mode='menu'}};
+  ws.onerror=()=>showUI(`${kittySVG('kit')}<div>Нет связи с сервером 😿</div><button onclick="location.reload()">Обновить</button>`);
+  setInterval(()=>net({t:'ping'}),25000)}
+function hostDuel(){duel=true;isHost=true;code=Math.random().toString(36).slice(2,8);history.replaceState(null,'','#'+code);mode='wait';
+  connect('host',()=>{const link=location.href;
+    showUI(`${kittySVG('kit')}<h1>Дуэль</h1><div class="small">Отправь другу ссылку:</div><input id="lnk" readonly value="${link}">
+    <button id="cp">Скопировать</button>${navigator.share?'<button class="alt" id="sh">Поделиться</button>':''}<div class="small" id="st">Ждём друга… ✨</div>`);
+    document.getElementById('cp').onclick=()=>{document.getElementById('lnk').select();navigator.clipboard?.writeText(link);document.getElementById('cp').textContent='Скопировано 💗'};
+    const sh=document.getElementById('sh');if(sh)sh.onclick=()=>navigator.share({title:'Кто нарежет больше фруктов?',url:link});
+    if(guestHere)hostReady()})}
+function hostReady(){showUI(`${kittySVG('kit')}<h1>Друг здесь! 🎉</h1><div class="small">60 секунд, одинаковые фрукты у обоих. Кто больше нарежет, тот и победил.</div><button id="go">Старт!</button>`);
+  document.getElementById('go').onclick=startDuel}
+function joinDuel(c){duel=true;isHost=false;code=c;mode='wait';showUI(`${kittySVG('kit')}<div>Подключаюсь…</div>`);
+  connect('guest',()=>{net({t:'hello'});showUI(`${kittySVG('kit')}<h1>Ты в дуэли! ⚔️</h1><div class="small">Ждём, пока друг нажмёт «Старт».<br>60 секунд, кто больше нарежет, тот победил.</div>`)})}
 
 const h=location.hash.slice(1);
-if(/^[a-z0-9]{4,12}$/.test(h))join(h);else lobby();
+if(/^[a-z0-9]{4,12}$/.test(h))joinDuel(h);else menu();
 </script>
 </body>
 </html>
