@@ -35,6 +35,7 @@ input{font:inherit;width:100%;padding:10px;border-radius:12px;border:2px solid #
 .vs{display:flex;justify-content:space-around;width:100%;font-weight:bold}
 .vs div{font-size:30px}
 #count{position:fixed;inset:0;z-index:6;display:none;align-items:center;justify-content:center;font-size:120px;font-weight:bold;color:#fff;text-shadow:4px 4px 0 #a8326a;pointer-events:none}
+#snd{position:fixed;right:12px;bottom:12px;z-index:8;width:48px;height:48px;padding:0;font-size:22px;border-radius:50%}
 </style>
 </head>
 <body>
@@ -45,6 +46,7 @@ input{font:inherit;width:100%;padding:10px;border-radius:12px;border:2px solid #
 <div class="r" id="oppBox"><div class="lbl">Друг</div><div class="big" id="opS">0</div></div></div>
 <div id="count"></div>
 <div id="ui"></div>
+<button id="snd" aria-label="Звук">🔊</button>
 <script>
 /* ---------- оформление ---------- */
 function kittySVG(cls=''){return `<svg class="${cls}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -73,6 +75,51 @@ function kittySVG(cls=''){return `<svg class="${cls}" viewBox="0 0 100 100" xmln
   document.getElementById('sakura').innerHTML=h;
 })();
 
+
+/* ---------- звук (синтез в браузере) ---------- */
+let AC=null,master,musicGain,noiseBuf,musicIv=null,step=0,nextT=0,lastWhoosh=0;
+let muted=(()=>{try{return localStorage.getItem('fr_mute')==='1'}catch{return false}})();
+function audio(){
+  if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;AC=new C();
+    master=AC.createGain();master.gain.value=muted?0:.8;master.connect(AC.destination);
+    musicGain=AC.createGain();musicGain.gain.value=.2;musicGain.connect(master);
+    noiseBuf=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}
+  if(AC.state==='suspended')AC.resume();return AC}
+const mf=m=>440*Math.pow(2,(m-69)/12);
+function tone(f,t,dur,type='square',vol=.15,dest=master,f2=null){const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,t);
+  if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+dur);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);
+  o.connect(g);g.connect(dest);o.start(t);o.stop(t+dur+.02)}
+function noise(t,dur,ftype,f1,f2,vol,dest=master,q=1){const n=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();n.buffer=noiseBuf;
+  f.type=ftype;f.Q.value=q;f.frequency.setValueAtTime(f1,t);f.frequency.exponentialRampToValueAtTime(f2,t+dur);
+  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);n.connect(f);f.connect(g);g.connect(dest);n.start(t);n.stop(t+dur+.02)}
+function sfxSlice(){if(!audio())return;const t=AC.currentTime,r=.85+Math.random()*.35;
+  noise(t,.13,'bandpass',4000*r,700,.5,master,2);            // вжух
+  noise(t+.02,.12,'lowpass',1800,300,.45);                    // сочный хруст
+  tone(320*r,t+.02,.14,'sine',.35,master,110*r)}              // плюх
+function sfxWhoosh(){if(!audio())return;const t=AC.currentTime;noise(t,.16,'bandpass',900,3500,.16,master,1.5)}
+function sfxBomb(){if(!audio())return;const t=AC.currentTime;noise(t,.7,'lowpass',1200,60,.9);tone(110,t,.6,'sine',.6,master,30)}
+function sfxCombo(n){if(!audio())return;const t=AC.currentTime;[72,76,79,84,88].slice(0,Math.min(5,n)).forEach((m,i)=>tone(mf(m),t+i*.07,.18,'triangle',.25))}
+function sfxBeep(hi){if(!audio())return;tone(hi?1320:660,AC.currentTime,hi?.35:.15,'square',.12)}
+function sfxEnd(win){if(!audio())return;const t=AC.currentTime;
+  (win?[72,76,79,84]:[72,67,64,60]).forEach((m,i)=>tone(mf(m),t+i*.13,.25,'square',.13))}
+// своя озорная мелодия: 4 такта по 8 восьмых
+const MEL=[72,null,76,79,76,null,72,74, 76,null,79,81,79,76,74,null, 77,null,81,84,81,77,76,74, 79,null,74,76,79,83,84,null];
+const BASS=[48,45,41,43];
+function startMusic(){if(!audio()||musicIv)return;nextT=AC.currentTime+.05;step=0;
+  musicIv=setInterval(()=>{
+    const fast=mode==='play'&&(performance.now()-start)/1000>DUR-10;
+    const sd=60/(fast?178:150)/2;
+    while(nextT<AC.currentTime+.12){
+      const i=step%32,m=MEL[i],b=BASS[(i/8|0)];
+      if(m)tone(mf(m),nextT,sd*.9,'square',.11,musicGain);
+      tone(mf(b+(i%2?12:0)),nextT,sd*.8,'triangle',.28,musicGain);
+      noise(nextT,.04,'highpass',7000,6000,i%2?.06:.12,musicGain);
+      if(i%4===2)noise(nextT,.09,'bandpass',1800,900,.18,musicGain,1);
+      nextT+=sd;step++}
+  },25)}
+function setMute(v){muted=v;try{localStorage.setItem('fr_mute',v?'1':'0')}catch{}
+  if(master)master.gain.value=v?0:.8;document.getElementById('snd').textContent=v?'🔇':'🔊'}
+
 /* ---------- игра ---------- */
 const DUR=60,G=1.6;
 const FRUITS=[['🍉','#ff4d6d'],['🍊','#ff9f1c'],['🍎','#e63946'],['🍋','#ffd60a'],['🍑','#ffb4a2'],['🍓','#ff006e'],['🍍','#ffc300'],['🥝','#80b918'],['🍇','#9d4edd'],['🍒','#d00000']];
@@ -96,12 +143,13 @@ function schedule(seed){const R=rng(seed),list=[];let t=1;
 
 let mode='menu',items=[],next=0,live=[],halves=[],parts=[],pops=[],trail=[],start=0,score=0,stroke=0,strokeT=0,shake=0,flash=0,sched=[],lastSent=-1;
 function begin(seed){
+  audio();startMusic();
   sched=schedule(seed);next=0;live=[];halves=[];parts=[];pops=[];score=0;oppScore=0;oppFinal=null;
   document.getElementById('myS').textContent=0;document.getElementById('opS').textContent=0;
   document.getElementById('oppBox').style.visibility=duel?'visible':'hidden';
   hideUI();document.getElementById('hud').style.display='flex';
-  mode='count';const c=document.getElementById('count');c.style.display='flex';let n=3;c.textContent=n;
-  const iv=setInterval(()=>{n--;if(n>0)c.textContent=n;else{clearInterval(iv);c.textContent='Режь!';setTimeout(()=>c.style.display='none',600);
+  mode='count';const c=document.getElementById('count');c.style.display='flex';let n=3;c.textContent=n;sfxBeep(false);
+  const iv=setInterval(()=>{n--;if(n>0){c.textContent=n;sfxBeep(false)}else{clearInterval(iv);c.textContent='Режь!';sfxBeep(true);setTimeout(()=>c.style.display='none',600);
     mode='play';start=performance.now()}},800);
 }
 function posOf(o,el){const dt=el-o.t;return{x:(o.x+o.vx*dt)*W,y:(1.08+o.vy*dt+.5*G*dt*dt)*H,a:o.rot*dt,vx:o.vx*W,vy:(o.vy+G*dt)*H}}
@@ -109,22 +157,23 @@ function addScore(d){score=Math.max(0,score+d);document.getElementById('myS').te
   if(duel&&score!==lastSent){lastSent=score;net({t:'score',s:score})}}
 function slice(o,el){
   const p=posOf(o,el);o.dead=true;
-  if(o.bomb){shake=.35;flash=.3;addScore(-5);pops.push({x:p.x,y:p.y,txt:'-5 💥',t:0,c:'#ff3b3b'});
+  if(o.bomb){sfxBomb();shake=.35;flash=.3;addScore(-5);pops.push({x:p.x,y:p.y,txt:'-5 💥',t:0,c:'#ff3b3b'});
     for(let i=0;i<18;i++)parts.push({x:p.x,y:p.y,vx:(Math.random()-.5)*600,vy:(Math.random()-.5)*600,t:0,c:i%2?'#333':'#ff9f1c'});return}
-  stroke++;strokeT=performance.now();addScore(1);
+  stroke++;strokeT=performance.now();addScore(1);sfxSlice();
   const [e,col]=FRUITS[o.f];
   for(const s of[-1,1])halves.push({e,x:p.x,y:p.y,vx:p.vx+s*110,vy:p.vy-120,a:p.a,va:s*4,side:s,t:0});
   for(let i=0;i<10;i++)parts.push({x:p.x,y:p.y,vx:(Math.random()-.5)*420,vy:(Math.random()-.8)*420,t:0,c:col});
 }
-function endStroke(){if(stroke>=3){const b=stroke;addScore(b);const last=trail[trail.length-1]||{x:W/2,y:H/2};
+function endStroke(){if(stroke>=3){const b=stroke;sfxCombo(b);addScore(b);const last=trail[trail.length-1]||{x:W/2,y:H/2};
   pops.push({x:last.x,y:last.y,txt:`Комбо ×${b}! +${b}`,t:0,c:'#fff'})}stroke=0}
 function segHit(ax,ay,bx,by,cx,cy,r){const dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy||1;let t=((cx-ax)*dx+(cy-ay)*dy)/l;t=Math.max(0,Math.min(1,t));
   const x=ax+t*dx-cx,y=ay+t*dy-cy;return x*x+y*y<r*r}
 
 let down=false;
-cv.addEventListener('pointerdown',e=>{down=true;trail=[{x:e.clientX,y:e.clientY,t:performance.now()}]});
+cv.addEventListener('pointerdown',e=>{audio();startMusic();down=true;trail=[{x:e.clientX,y:e.clientY,t:performance.now()}]});
 cv.addEventListener('pointermove',e=>{if(!down||mode!=='play')return;const now=performance.now(),pt={x:e.clientX,y:e.clientY,t:now},last=trail[trail.length-1];trail.push(pt);
-  if(!last)return;const el=(now-start)/1000;
+  if(!last)return;
+  if(Math.hypot(pt.x-last.x,pt.y-last.y)/Math.max(1,now-last.t)>1.2&&now-lastWhoosh>180){lastWhoosh=now;sfxWhoosh()}const el=(now-start)/1000;
   for(const o of live)if(!o.dead){const p=posOf(o,el);if(segHit(last.x,last.y,pt.x,pt.y,p.x,p.y,RAD*.9))slice(o,el)}});
 addEventListener('pointerup',()=>{down=false;endStroke()});
 addEventListener('pointercancel',()=>{down=false;endStroke()});
@@ -181,11 +230,11 @@ let duel=false,isHost=false,code='',ws=null,oppScore=0,oppFinal=null,wins=[0,0],
 function menu(){mode='menu';document.getElementById('hud').style.display='none';
   showUI(`${kittySVG('kit')}<h1>Кошачий Фрукторез</h1><div class="small">Режь фрукты пальцем или мышкой. Бомбы не трогай! 3+ фрукта одним взмахом: комбо.</div>
   <button id="duel">⚔️ Дуэль с другом</button><button class="alt" id="solo">🍉 Играть одному</button><div class="small">Рекорд: ${getBest()}</div>`);
-  document.getElementById('solo').onclick=()=>{duel=false;begin(Math.random()*1e9|0)};
+  document.getElementById('solo').onclick=()=>{audio();startMusic();duel=false;begin(Math.random()*1e9|0)};
   document.getElementById('duel').onclick=hostDuel}
 function finish(){
   mode='over';document.getElementById('hud').style.display='none';
-  const rec=score>getBest();if(rec)setBest(score);
+  const rec=score>getBest();if(rec)setBest(score);if(!duel)sfxEnd(rec||score>=20);
   if(!duel){showUI(`${kittySVG('kit')}<div class="small">Твой счёт</div><div class="res">${score}</div><div class="small">${rec?'Новый рекорд! 🎉':'Рекорд: '+getBest()}</div>
     <button id="again">Ещё раз</button><button class="alt" id="back">В меню</button>`);
     document.getElementById('again').onclick=()=>begin(Math.random()*1e9|0);document.getElementById('back').onclick=menu;return}
@@ -193,7 +242,7 @@ function finish(){
 function duelResult(){
   if(mode!=='over')return;
   if(oppFinal===null){showUI(`${kittySVG('kit')}<div class="small">Твой счёт</div><div class="res">${score}</div><div class="small">Ждём результат друга…</div>`);return}
-  if(!duelResult.counted){duelResult.counted=true;if(score>oppFinal)wins[0]++;else if(oppFinal>score)wins[1]++}
+  if(!duelResult.counted){duelResult.counted=true;sfxEnd(score>=oppFinal);if(score>oppFinal)wins[0]++;else if(oppFinal>score)wins[1]++}
   const t=score>oppFinal?'Ты победил! 🏆':score<oppFinal?'Друг победил 😿':'Ничья! 🤝';
   showUI(`${kittySVG('kit')}<h1>${t}</h1><div class="vs"><span>Ты<div>${score}</div></span><span>Друг<div>${oppFinal}</div></span></div>
    <div class="small">Счёт серии: <b>${wins[0]} : ${wins[1]}</b></div><button id="re">Реванш ⚔️</button><button class="alt" id="back">Выйти</button>`);
@@ -227,6 +276,7 @@ function hostReady(){showUI(`${kittySVG('kit')}<h1>Друг здесь! 🎉</h1
 function joinDuel(c){duel=true;isHost=false;code=c;mode='wait';showUI(`${kittySVG('kit')}<div>Подключаюсь…</div>`);
   connect('guest',()=>{net({t:'hello'});showUI(`${kittySVG('kit')}<h1>Ты в дуэли! ⚔️</h1><div class="small">Ждём, пока друг нажмёт «Старт».<br>60 секунд, кто больше нарежет, тот победил.</div>`)})}
 
+document.getElementById('snd').onclick=()=>{audio();startMusic();setMute(!muted)};setMute(muted);
 const h=location.hash.slice(1);
 if(/^[a-z0-9]{4,12}$/.test(h))joinDuel(h);else menu();
 </script>
